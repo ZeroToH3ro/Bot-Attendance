@@ -1,19 +1,35 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    axiom-types (0.1.1)
-      descendants_tracker (~> 0.0.4)
-      ice_nine (~> 0.11.0)
-      thread_safe (~> 0.3, >= 0.3.1)
     base64 (0.2.0)
-    coercible (1.0.0)
-      descendants_tracker (~> 0.0.1)
+    bigdecimal (3.1.8)
+    concurrent-ruby (1.2.3)
     csv (3.3.0)
-    descendants_tracker (0.0.4)
-      thread_safe (~> 0.3, >= 0.3.1)
     dotenv (3.1.2)
+    dry-core (1.0.1)
+      concurrent-ruby (~> 1.0)
+      zeitwerk (~> 2.6)
+    dry-inflector (1.0.0)
+    dry-logic (1.5.0)
+      concurrent-ruby (~> 1.0)
+      dry-core (~> 1.0, < 2)
+      zeitwerk (~> 2.6)
+    dry-struct (1.6.0)
+      dry-core (~> 1.0, < 2)
+      dry-types (>= 1.7, < 2)
+      ice_nine (~> 0.11)
+      zeitwerk (~> 2.6)
+    dry-types (1.7.2)
+      bigdecimal (~> 3.0)
+      concurrent-ruby (~> 1.0)
+      dry-core (~> 1.0)
+      dry-inflector (~> 1.0)
+      dry-logic (~> 1.4)
+      zeitwerk (~> 2.6)
     faraday (2.9.0)
       faraday-net_http (>= 2.0, < 3.2)
+    faraday-multipart (1.0.4)
+      multipart-post (~> 2)
     faraday-net_http (3.1.0)
       net-http
     gemoji (4.1.0)
@@ -21,20 +37,17 @@ GEM
       base64 (>= 0.1.0)
       csv (>= 3.0.0)
     ice_nine (0.11.2)
-    inflecto (0.0.2)
+    multipart-post (2.4.1)
     net-http (0.4.1)
       uri
     pg (1.5.6)
-    telegram-bot-ruby (0.11.0)
-      faraday
-      inflecto
-      virtus
-    thread_safe (0.3.6)
+    telegram-bot-ruby (2.0.0)
+      dry-struct (~> 1.6)
+      faraday (~> 2.0)
+      faraday-multipart (~> 1.0)
+      zeitwerk (~> 2.6)
     uri (0.13.0)
-    virtus (2.0.0)
-      axiom-types (~> 0.1)
-      coercible (~> 1.0)
-      descendants_tracker (~> 0.0, >= 0.0.3)
+    zeitwerk (2.6.13)
 
 PLATFORMS
   arm64-darwin-23
@@ -52,4 +65,4 @@ RUBY VERSION
    ruby 3.1.4p223
 
 BUNDLED WITH
-   2.5.3
+   2.5.10
