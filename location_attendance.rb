@@ -9,9 +9,10 @@ Dotenv.load
 
 class LocationAttendance
   TIME_STAMP = Time.now.strftime('%Y-%m-%d %H:%M:%S')
+  NOW_DATE = Time.now.strftime('%Y-%m-%d')
   LATITUDE_SCHOOL = ENV['LATITUDE_SCHOOL'].to_f
   LONGITUDE_SCHOOL = ENV['LONGITUDE_SCHOOL'].to_f
-  CSV_FILE_PATH = "source/attendance_#{TIME_STAMP}.csv"
+  CSV_FILE_PATH = "source/attendance_#{NOW_DATE}.csv"
   CSV_HEADERS = ['ID', 'Last Name', 'First Name', 'Full Name', 'Timestamp', 'Attend', 'USER_ID', 'Latitude', 'Longitude'].freeze
   PROFESSOR_NAME = ENV['PROFESSOR_NAME']
   DB_HOST = ENV['DB_HOST']
@@ -50,7 +51,7 @@ class LocationAttendance
         puts "Error: #{e}\nStack trace: #{e.backtrace.join("\n\t")}"
       end
     else
-      puts "You are so far from me with your distance #{distance} m."
+      bot.api.send_message(chat_id: message.from.id, text: "You are so far from me with your distance #{distance} m. (#{TIME_STAMP}) ")
     end
     location.to_a
   end
@@ -72,6 +73,8 @@ class LocationAttendance
 
     if message.from.username == PROFESSOR_NAME
       bot.api.send_document(chat_id: message.chat.id, document: Faraday::UploadIO.new(CSV_FILE_PATH, 'text/csv'))
+    else
+      bot.api.send_message(chat_id: message.chat.id, text: "You are not professor. So I can not send CSV FILE to you")
     end
   end
 
