@@ -2,7 +2,7 @@
 source "https://rubygems.org"
 ruby "3.1.4"
 # bot ruby
-gem 'telegram-bot-ruby', '~> 0.11.0'
+gem 'telegram-bot-ruby'
 # emoji
 gem 'gemoji'
 # file environment
