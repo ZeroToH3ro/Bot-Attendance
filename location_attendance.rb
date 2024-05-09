@@ -62,7 +62,7 @@ class LocationAttendance
       end
     end
 
-    conn = PG.connect(dbname: DB_NAME.to_s, user: DB_USER.to_s, password: DB_PASSWORD.to_s, host: DB_HOST.to_s, port: DB_HOST.to_s)
+    conn = PG.connect(dbname: DB_NAME.to_s, user: DB_USER.to_s, password: DB_PASSWORD.to_s, host: DB_HOST.to_s, port: DB_PORT.to_s)
     result = conn.exec('SELECT * FROM students WHERE time > now() - interval \'1 day\'')
     rows = result.map(&:values)
 
@@ -81,7 +81,7 @@ class LocationAttendance
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
     SQL
 
-    conn = PG.connect(dbname: DB_NAME.to_s, user: DB_USER.to_s, password: DB_PASSWORD.to_s, host: DB_HOST.to_s, port: DB_HOST.to_s)
+    conn = PG.connect(dbname: DB_NAME.to_s, user: DB_USER.to_s, password: DB_PASSWORD.to_s, host: DB_HOST.to_s, port: DB_PORT.to_s)
     conn.exec_params(sql, [
       first_name,
       last_name,
