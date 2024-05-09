@@ -8,16 +8,22 @@ require 'csv'
 Dotenv.load
 
 class LocationAttendance
+  TIME_STAMP = Time.now.strftime('%Y-%m-%d %H:%M:%S')
   LATITUDE_SCHOOL = ENV['LATITUDE_SCHOOL'].to_f
   LONGITUDE_SCHOOL = ENV['LONGITUDE_SCHOOL'].to_f
-  CSV_FILE_PATH = 'attendance.csv'
-  CSV_HEADERS = ['ID', 'First Name', 'Last Name', 'Full Name' ,'Timestamp', 'Attend', 'USER_ID', 'Latitude', 'Longitude']
-  PROFESSOR_NAME = 'ZeroDev2002'
+  CSV_FILE_PATH = "source/attendance_#{TIME_STAMP}.csv"
+  CSV_HEADERS = ['ID', 'Last Name', 'First Name', 'Full Name', 'Timestamp', 'Attend', 'USER_ID', 'Latitude', 'Longitude'].freeze
+  PROFESSOR_NAME = ENV['PROFESSOR_NAME']
+  DB_HOST = ENV['DB_HOST']
+  DB_NAME = ENV['DB_NAME']
+  DB_USER = ENV['DB_USER']
+  DB_PASSWORD = ENV['DB_PASSWORD']
+  DB_PORT = ENV['DB_PORT']
 
   @@logger = Logger.new($stdout)
   @@logger.level = Logger::INFO
 
-  def initialize;end
+  def initialize; end
 
   def attend_location(bot, location, message)
     school_coordinates = [LATITUDE_SCHOOL, LONGITUDE_SCHOOL]
@@ -26,21 +32,19 @@ class LocationAttendance
     threshold_distance = 100
 
     if distance <= threshold_distance
-      timestamp = Time.now.strftime('%Y-%m-%d %H:%M:%S')
       begin
-        puts "Your location: #{location.to_a[0].to_f} - Longitude: #{location.to_a[1].to_f} - Distance: #{distance}"
+        puts "Your location => Latitude: #{location.to_a[0].to_f} - Longitude: #{location.to_a[1].to_f} - Distance: #{distance}"
         add_student(
           message.from.first_name,
           message.from.last_name,
           message.from.username,
-          timestamp,
+          TIME_STAMP,
           true,
           message.from.id,
           location.to_a[0].to_f,
           location.to_a[1].to_f
         )
-
-        bot.api.send_message(chat_id: message.from.id, text: 'You are checked in.')
+        bot.api.send_message(chat_id: message.from.id, text: "You are checked in #{TIME_STAMP}")
         puts 'You are checked => Add Student Successfully'
       rescue StandardError => e
         puts "Error: #{e}\nStack trace: #{e.backtrace.join("\n\t")}"
@@ -60,14 +64,14 @@ class LocationAttendance
 
     conn = PG.connect(dbname: 'student_attendance', user: 'zero', password: 'minh21052002', host: 'localhost', port: '5432')
     result = conn.exec('SELECT * FROM students WHERE time > now() - interval \'1 day\'')
-    rows = result.map { |row| row.values }
+    rows = result.map(&:values)
 
     CSV.open(CSV_FILE_PATH, 'a') do |csv|
       rows.each { |row| csv << row }
     end
 
     if message.from.username == PROFESSOR_NAME
-        bot.api.send_document(chat_id: message.chat.id, document: Faraday::UploadIO.new(CSV_FILE_PATH, 'text/csv'))
+      bot.api.send_document(chat_id: message.chat.id, document: Faraday::UploadIO.new(CSV_FILE_PATH, 'text/csv'))
     end
   end
 
