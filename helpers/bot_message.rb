@@ -3,10 +3,10 @@ require_relative 'bot_message'
 require 'gemoji'
 
 module BotMessage
-  BOT_START_MESSAGE = "Author Zero\nThanks for using BotZero!\n🤖 Would you like to..."
-  BOT_ACTION_MESSAGE = '🤖 Would you like to...'
+  BOT_START_MESSAGE = "Author Zero\nThanks for using BotZero!\n🤖 Click button attend to continue and follow the instruction."
+  BOT_ACTION_MESSAGE = '🤖 Click button Attend to finish.'
   BOT_ERROR_MESSAGE = '🤖 Please share your location to mark attendance.'
-  BOT_HELP_MESSAGE = "ℹ️ Use inline buttons below #{Emoji.find_by_alias('point_down').raw} (PickUp or Drop) here or type the inline command @bikingram_bot in any chat to find out the closest sharing bike station.\nThe result will be according to your actual position.\nYou can also pin any location and this bot will show you the closest station from that point."
+  BOT_HELP_MESSAGE = "ℹ️ Use inline buttons below #{Emoji.find_by_alias('point_down').raw} Attend here or type the inline command @zero_automation_testing_bot in any chat to mark your attendance.\nThe result will be according to your actual position.\n"
   BOT_EXPORT_MESSAGE = "CSV File has been sent to your phone."
 
   def self.send_bot_message(bot, chat_id, markup, text = nil)

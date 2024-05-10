@@ -61,16 +61,13 @@ module BotHelper
   def self.shared_inline_location_markup(location)
     [[
       Telegram::Bot::Types::InlineKeyboardButton.new(text: 'Attend',
-                                                    callback_data: Location.new(location).to_callback_loc),
-      Telegram::Bot::Types::InlineKeyboardButton.new(text: 'Drop',
-                                                    callback_data: Location.new(location, 'd').to_callback_loc),
+                                                    callback_data: Location.new(location).to_callback_loc)
     ]]
   end
 
   def self.chat_inline_location_markup
     [[
       Telegram::Bot::Types::InlineKeyboardButton.new(text: 'Attend', switch_inline_query_current_chat: 'attend'),
-      Telegram::Bot::Types::InlineKeyboardButton.new(text: 'Drop', switch_inline_query_current_chat: 'drop')
     ]]
   end
 end
