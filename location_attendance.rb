@@ -71,7 +71,7 @@ class LocationAttendance
                       host: DB_HOST.to_s, port: DB_PORT.to_s)
     start_time = (DateTime.parse(TIME_STAMP) - Rational(15, 24 * 60)).strftime('%Y-%m-%d %H:%M:%S')
     end_time = (DateTime.parse(TIME_STAMP) + Rational(15, 24 * 60)).strftime('%Y-%m-%d %H:%M:%S')
-    result = conn.exec_params('SELECT * FROM students WHERE time BETWEEN $1::timestamp - interval \'15 minutes\' AND $2::timestamp + interval \'15 minutes\'', [start_time, end_time])
+    result = conn.exec_params('SELECT *, CASE WHEN attend THEN \'Yes\' ELSE \'No\' END AS attendance_status FROM students WHERE time BETWEEN $1::timestamp - interval \'15 minutes\' AND $2::timestamp + interval \'15 minutes\'', [start_time, end_time])
 
     unless File.exist?(CSV_FILE_PATH)
       CSV.open(CSV_FILE_PATH, 'wb') do |csv|
