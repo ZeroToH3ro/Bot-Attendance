@@ -7,8 +7,9 @@ require 'dotenv'
 Dotenv.load
 
 TELEGRAM_BOT_TOKEN = ENV['TELEGRAM_BOT_TOKEN']
+WEBHOOK_URL = ENV['WEBHOOK_URL']
 
-Telegram::Bot::Client.run(TELEGRAM_BOT_TOKEN, webhook_url: "https://api.render.com/deploy/srv-cou5lm20si5c7398n1jg?key=kW3FS-R8ZoM") do |bot|
+Telegram::Bot::Client.run(TELEGRAM_BOT_TOKEN, webhook_url: WEBHOOK_URL.to_s) do |bot|
   bot.listen do |message|
     case message
     when Telegram::Bot::Types::CallbackQuery
