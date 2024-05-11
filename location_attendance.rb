@@ -88,7 +88,7 @@ class LocationAttendance
     if message.from.username == PROFESSOR_NAME
       bot.api.send_document(chat_id: message.chat.id, document: Faraday::UploadIO.new(CSV_FILE_PATH, 'text/csv'))
       conn.close
-      File.delete(CSV_FILE_PATH)
+      # File.delete(CSV_FILE_PATH)
     else
       bot.api.send_message(chat_id: message.chat.id, text: "You are not professor. So I can not send CSV FILE to you")
     end
