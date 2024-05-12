@@ -9,6 +9,7 @@ require "active_support/all"
 Dotenv.load
 
 class LocationAttendance
+  # Set timezone = 'Asia/Bangkok'
   Time.zone = 'Asia/Bangkok'
   TIME_STAMP = Time.zone.now.strftime('%Y-%m-%d %H:%M:%S')
   NOW_DATE = Time.now.strftime('%Y-%m-%d')
