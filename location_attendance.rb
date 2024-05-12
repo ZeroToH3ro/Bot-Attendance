@@ -4,11 +4,13 @@ require 'geocoder'
 require 'dotenv'
 require 'pg'
 require 'csv'
+require "active_support/all"
 
 Dotenv.load
 
 class LocationAttendance
-  TIME_STAMP = Time.now.strftime('%Y-%m-%d %H:%M:%S')
+  Time.zone = 'Asia/Bangkok'
+  TIME_STAMP = Time.zone.now.strftime('%Y-%m-%d %H:%M:%S')
   NOW_DATE = Time.now.strftime('%Y-%m-%d')
   LATITUDE_SCHOOL = ENV['LATITUDE_SCHOOL'].to_f
   LONGITUDE_SCHOOL = ENV['LONGITUDE_SCHOOL'].to_f
