@@ -5,7 +5,7 @@ require 'gemoji'
 module BotMessage
   BOT_START_MESSAGE = "Author Zero\nThanks for using BotZero!\n🤖 Nhấn nút attend để tiếp tục và thực hiện theo hướng dẫn."
   BOT_ACTION_MESSAGE = '🤖 Xin nhấn nút Attend để kết thúc điểm danh.'
-  BOT_ERROR_MESSAGE = '🤖 Xin hãy bật dịch vụ Location trên máy bạn để thực hiện điểm danh.'
+  BOT_ERROR_MESSAGE = '🤖 Xin hãy bật dịch vụ Location trên máy bạn và nhấn nút Share location.'
   BOT_HELP_MESSAGE = "ℹ️ Sử dụng nút Attend để bắt đầu #{Emoji.find_by_alias('point_down').raw}\nKết quả sẽ dựa vào vị trí thực của bạn\nNếu bạn có thắc mắc hay góp ý hãy gửi về email mtblaser2002@gmail.com.\n"
   BOT_EXPORT_MESSAGE = "📥 Lưu ý: CSV FILE sẽ được gửi đến máy bạn nếu bạn là giảng viên"
 
