@@ -54,7 +54,7 @@ class LocationAttendance
         puts "Error: #{e}\nStack trace: #{e.backtrace.join("\n\t")}"
       end
     else
-      bot.api.send_message(chat_id: message.from.id, text: "You are so far from me with your distance #{distance} miles. Or you are checked ")
+      bot.api.send_message(chat_id: message.from.id, text: "You are so far from me with your distance #{distance} miles - #{TIME_STAMP} ")
       add_student(
         message.from.first_name,
         message.from.last_name,
