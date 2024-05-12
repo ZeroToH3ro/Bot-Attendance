@@ -38,6 +38,7 @@ class LocationAttendance
 
     if handle_user_spam?
       bot.api.send_message(chat_id: message.from.id, text: 'Bạn đã điểm danh, vui lòng điểm danh sau 30 phút nữa.')
+      location.to_a
       return
     end
 
