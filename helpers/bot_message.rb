@@ -7,7 +7,7 @@ module BotMessage
   BOT_ACTION_MESSAGE = '🤖 Xin nhấn nút Attend để kết thúc điểm danh.'
   BOT_ERROR_MESSAGE = '🤖 Xin hãy bật dịch vụ Location trên máy bạn và nhấn nút Share location.'
   BOT_HELP_MESSAGE = "ℹ️ Sử dụng nút Attend để bắt đầu #{Emoji.find_by_alias('point_down').raw}\nKết quả sẽ dựa vào vị trí thực của bạn\nNếu bạn có thắc mắc hay góp ý hãy gửi về email mtblaser2002@gmail.com.\n"
-  BOT_EXPORT_MESSAGE = "📥 Lưu ý: CSV FILE sẽ được gửi đến máy bạn nếu bạn là giảng viên"
+  BOT_EXPORT_MESSAGE = "📥 Lưu ý: FILE CSV sẽ được gửi đến máy bạn nếu bạn là giảng viên."
 
   def self.send_bot_message(bot, chat_id, markup, text = nil)
     bot.api.send_message(chat_id: chat_id, text: (text.nil? ? BOT_START_MESSAGE : text).to_s, reply_markup: markup)

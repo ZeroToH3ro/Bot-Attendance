@@ -38,8 +38,7 @@ class LocationAttendance
 
     if handle_user_spam?(bot, message)
       bot.api.send_message(chat_id: message.from.id, text: 'Bạn đã điểm danh, vui lòng điểm danh sau 30 phút nữa.')
-      location.to_a
-      return
+      return location.to_a
     end
 
     if distance <= threshold_distance
@@ -95,10 +94,12 @@ class LocationAttendance
       end
     end
 
-    if message.from.username == PROFESSOR_NAME
+    user_name = message.from.username
+    professor_names = PROFESSOR_NAME.split(',')
+
+    if professor_names.any? { |professor_name| professor_name == user_name }
       bot.api.send_document(chat_id: message.chat.id, document: Faraday::UploadIO.new(CSV_FILE_PATH, 'text/csv'))
       conn.close
-      # File.delete(CSV_FILE_PATH)
     else
       bot.api.send_message(chat_id: message.chat.id, text: "Bạn không phải giáo sư. Nên tôi không thể gửi file csv cho bạn được.")
     end
@@ -125,13 +126,25 @@ class LocationAttendance
   end
 
   def handle_user_spam?(bot, message)
+    begin
     conn = PG.connect(dbname: DB_NAME.to_s, user: DB_USER.to_s, password: DB_PASSWORD.to_s, host: DB_HOST.to_s, port: DB_PORT.to_s)
-    result = conn.exec_params('SELECT * FROM students WHERE user_id = $1 AND time > NOW() - INTERVAL \'3 minutes\'', [message.from.id])
-
+    result = conn.exec_params('SELECT * FROM students WHERE user_id = $1 ORDER BY time DESC LIMIT 1', [message.from.id])
+    current_time = Time.zone.now
+    puts "current_time: #{current_time}"
     if result.ntuples > 0
-      false
-    else
-      true
+      last_interaction_time = Time.parse(result[0]['time'])
+      if (current_time - last_interaction_time) < 60 * 30
+        puts 'User attempt check in too fast'
+        return true
+      end
+    end
+    puts "User is allowed to check in."
+    return false
+    rescue PG::Error => e
+      puts "Error executing SQL query: #{e.message}"
+      return true  # Allow the user to proceed in case of an error
+    ensure
+      conn.close if conn
     end
   end
 end
