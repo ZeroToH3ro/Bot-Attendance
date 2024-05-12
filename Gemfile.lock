@@ -1,6 +1,11 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    activesupport (7.0.8.1)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 1.6, < 2)
+      minitest (>= 5.1)
+      tzinfo (~> 2.0)
     base64 (0.2.0)
     bigdecimal (3.1.8)
     concurrent-ruby (1.2.3)
@@ -36,7 +41,10 @@ GEM
     geocoder (1.8.3)
       base64 (>= 0.1.0)
       csv (>= 3.0.0)
+    i18n (1.14.5)
+      concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
+    minitest (5.22.3)
     multipart-post (2.4.1)
     net-http (0.4.1)
       uri
@@ -46,6 +54,8 @@ GEM
       faraday (~> 2.0)
       faraday-multipart (~> 1.0)
       zeitwerk (~> 2.6)
+    tzinfo (2.0.6)
+      concurrent-ruby (~> 1.0)
     uri (0.13.0)
     zeitwerk (2.6.13)
 
@@ -54,6 +64,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport (~> 7.0.8)
   csv
   dotenv
   gemoji
