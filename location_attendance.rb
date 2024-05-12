@@ -33,11 +33,12 @@ class LocationAttendance
     school_coordinates = [LATITUDE_SCHOOL, LONGITUDE_SCHOOL]
     puts "Coordinate of school and your location: #{school_coordinates.to_a} - #{location.to_a}"
     distance = Geocoder::Calculations.distance_between(school_coordinates, location.to_a)
+    formatted_distance = format("%.2f", distance)
     threshold_distance = THRESHOLD_DISTANCE
 
     if distance <= threshold_distance
       begin
-        puts "Your location => Latitude: #{location.to_a[0].to_f} - Longitude: #{location.to_a[1].to_f} - Distance: #{distance}"
+        puts "Your location => Latitude: #{location.to_a[0].to_f} - Longitude: #{location.to_a[1].to_f} - Distance: #{formatted_distance}"
         add_student(
           message.from.first_name,
           message.from.last_name,
@@ -48,13 +49,13 @@ class LocationAttendance
           location.to_a[0].to_f,
           location.to_a[1].to_f
         )
-        bot.api.send_message(chat_id: message.from.id, text: "You are checked in #{TIME_STAMP}")
+        bot.api.send_message(chat_id: message.from.id, text: "Bạn đã điểm danh vào lúc #{TIME_STAMP}")
         puts 'You are checked => Add Student Successfully'
       rescue StandardError => e
         puts "Error: #{e}\nStack trace: #{e.backtrace.join("\n\t")}"
       end
     else
-      bot.api.send_message(chat_id: message.from.id, text: "You are so far from me with your distance #{distance} miles - #{TIME_STAMP} ")
+      bot.api.send_message(chat_id: message.from.id, text: "Vị trí của bạn cách xa vị trí điểm danh khoảng #{formatted_distance} miles - #{TIME_STAMP} ")
       add_student(
         message.from.first_name,
         message.from.last_name,
@@ -93,7 +94,7 @@ class LocationAttendance
       conn.close
       # File.delete(CSV_FILE_PATH)
     else
-      bot.api.send_message(chat_id: message.chat.id, text: "You are not professor. So I can not send CSV FILE to you")
+      bot.api.send_message(chat_id: message.chat.id, text: "Bạn không phải giáo sư. Nên tôi không thể gửi file csv cho bạn được.")
     end
   end
 

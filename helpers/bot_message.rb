@@ -3,11 +3,11 @@ require_relative 'bot_message'
 require 'gemoji'
 
 module BotMessage
-  BOT_START_MESSAGE = "Author Zero\nThanks for using BotZero!\n🤖 Click button attend to continue and follow the instruction."
-  BOT_ACTION_MESSAGE = '🤖 Click button Attend to finish.'
-  BOT_ERROR_MESSAGE = '🤖 Please share your location to mark attendance.'
-  BOT_HELP_MESSAGE = "ℹ️ Use inline buttons below #{Emoji.find_by_alias('point_down').raw} Attend here or type the inline command @zero_automation_testing_bot in any chat to mark your attendance.\nThe result will be according to your actual position.\n"
-  BOT_EXPORT_MESSAGE = "CSV File has been sent to your phone."
+  BOT_START_MESSAGE = "Author Zero\nThanks for using BotZero!\n🤖 Nhấn nút attend để tiếp tục và thực hiện theo hướng dẫn."
+  BOT_ACTION_MESSAGE = '🤖 Xin nhấn nút Attend để kết thúc điểm danh.'
+  BOT_ERROR_MESSAGE = '🤖 Xin hãy bật dịch vụ Location trên máy bạn để thực hiện điểm danh.'
+  BOT_HELP_MESSAGE = "ℹ️ Sử dụng nút Attend để bắt đầu #{Emoji.find_by_alias('point_down').raw}\nKết quả sẽ dựa vào vị trí thực của bạn\nNếu bạn có thắc mắc hay góp ý hãy gửi về email mtblaser2002@gmail.com.\n"
+  BOT_EXPORT_MESSAGE = "📥 Lưu ý: CSV FILE sẽ được gửi đến máy bạn nếu bạn là giảng viên"
 
   def self.send_bot_message(bot, chat_id, markup, text = nil)
     bot.api.send_message(chat_id: chat_id, text: (text.nil? ? BOT_START_MESSAGE : text).to_s, reply_markup: markup)
