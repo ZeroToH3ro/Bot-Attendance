@@ -99,6 +99,7 @@ class LocationAttendance
 
     if professor_names.any? { |professor_name| professor_name == user_name }
       bot.api.send_document(chat_id: message.chat.id, document: Faraday::UploadIO.new(CSV_FILE_PATH, 'text/csv'))
+      File.delete(CSV_FILE_PATH)
       conn.close
     else
       bot.api.send_message(chat_id: message.chat.id, text: "Bạn không phải giáo sư. Nên tôi không thể gửi file csv cho bạn được.")
