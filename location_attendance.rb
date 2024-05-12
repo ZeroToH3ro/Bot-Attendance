@@ -36,6 +36,11 @@ class LocationAttendance
     formatted_distance = format("%.2f", distance)
     threshold_distance = THRESHOLD_DISTANCE
 
+    if handle_user_spam?
+      bot.api.send_message(chat_id: message.from.id, text: 'Bạn đã điểm danh, vui lòng điểm danh sau 30 phút nữa.')
+      return
+    end
+
     if distance <= threshold_distance
       begin
         puts "Your location => Latitude: #{location.to_a[0].to_f} - Longitude: #{location.to_a[1].to_f} - Distance: #{formatted_distance}"
@@ -73,8 +78,8 @@ class LocationAttendance
   def export_csv(bot, message)
     conn = PG.connect(dbname: DB_NAME.to_s, user: DB_USER.to_s, password: DB_PASSWORD.to_s,
                       host: DB_HOST.to_s, port: DB_PORT.to_s)
-    start_time = (DateTime.parse(TIME_STAMP) - Rational(15, 24 * 60)).strftime('%Y-%m-%d %H:%M:%S')
-    end_time = (DateTime.parse(TIME_STAMP) + Rational(15, 24 * 60)).strftime('%Y-%m-%d %H:%M:%S')
+    start_time = (DateTime.parse(TIME_STAMP) - Rational(30, 24 * 60)).strftime('%Y-%m-%d %H:%M:%S')
+    end_time = (DateTime.parse(TIME_STAMP) + Rational(30, 24 * 60)).strftime('%Y-%m-%d %H:%M:%S')
     result = conn.exec_params('SELECT *, CASE WHEN attend THEN \'Yes\' ELSE \'No\' END AS attendance_status FROM students WHERE time BETWEEN $1::timestamp - interval \'15 minutes\' AND $2::timestamp + interval \'15 minutes\'', [start_time, end_time])
 
     unless File.exist?(CSV_FILE_PATH)
@@ -120,7 +125,7 @@ class LocationAttendance
 
   def handle_user_spam?(bot, message)
     conn = PG.connect(dbname: DB_NAME.to_s, user: DB_USER.to_s, password: DB_PASSWORD.to_s, host: DB_HOST.to_s, port: DB_PORT.to_s)
-    result = conn.exec('SELECT * FROM students WHERE user_id = $1 and time > now() - interval \'1 day\'', [message.from.id])
+    result = conn.exec_params('SELECT * FROM students WHERE user_id = $1 AND time > NOW() - INTERVAL \'3 minutes\'', [message.from.id])
 
     if result.ntuples > 0
       false
