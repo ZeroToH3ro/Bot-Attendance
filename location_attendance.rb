@@ -83,12 +83,12 @@ class LocationAttendance
     result = conn.exec_params('SELECT *, CASE WHEN attend THEN \'Yes\' ELSE \'No\' END AS attendance_status FROM students WHERE time BETWEEN $1::timestamp - interval \'15 minutes\' AND $2::timestamp + interval \'15 minutes\'', [start_time, end_time])
 
     unless File.exist?(CSV_FILE_PATH)
-      CSV.open(CSV_FILE_PATH, 'wb') do |csv|
+      CSV.open(CSV_FILE_PATH, 'wb', encoding: 'UTF-8') do |csv|
         csv << result.fields.reject { |field| field == 'attend' }.map { |field| field.split('_').map(&:capitalize).join(' ') }
       end
     end
 
-    CSV.open(CSV_FILE_PATH, 'a') do |csv|
+    CSV.open(CSV_FILE_PATH, 'a', encoding: 'UTF-8') do |csv|
       result.each do |row|
         csv << row.reject { |key, _value| key == 'attend' }.values
       end
