@@ -11,8 +11,7 @@ Dotenv.load
 class LocationAttendance
   # Set timezone = 'Asia/Bangkok'
   Time.zone = 'Asia/Bangkok'
-  TIME_STAMP = Time.zone.now.strftime('%Y-%m-%d %H:%M:%S')
-  NOW_DATE = Time.now.strftime('%Y-%m-%d')
+  NOW_DATE = Time.zone.now.strftime('%Y-%m-%d')
   LATITUDE_SCHOOL = ENV['LATITUDE_SCHOOL'].to_f
   LONGITUDE_SCHOOL = ENV['LONGITUDE_SCHOOL'].to_f
   CSV_FILE_PATH = "source/attendance_#{NOW_DATE}.csv"
@@ -23,6 +22,7 @@ class LocationAttendance
   DB_PASSWORD = ENV['DB_PASSWORD']
   DB_PORT = ENV['DB_PORT']
   THRESHOLD_DISTANCE = ENV['THRESHOLD_DISTANCE'].to_i
+  TIME_TO_CHECK = ENV['TIME_TO_CHECK'].to_i
 
   @@logger = Logger.new($stdout)
   @@logger.level = Logger::INFO
@@ -30,16 +30,17 @@ class LocationAttendance
   def initialize; end
 
   def attend_location(bot, location, message)
+    time_now = Time.zone.now.strftime('%Y-%m-%d %H:%M:%S')
     school_coordinates = [LATITUDE_SCHOOL, LONGITUDE_SCHOOL]
     puts "Coordinate of school and your location: #{school_coordinates.to_a} - #{location.to_a}"
     distance = Geocoder::Calculations.distance_between(school_coordinates, location.to_a)
     formatted_distance = format("%.2f", distance)
     threshold_distance = THRESHOLD_DISTANCE
-
-    # if handle_user_spam?(bot, message)
-    #   bot.api.send_message(chat_id: message.from.id, text: 'Bạn đã điểm danh, vui lòng điểm danh sau 30 phút nữa.')
-    #   return location.to_a
-    # end
+    puts "Timestamp: #{time_now}"
+    if handle_user_spam?(bot, message)
+      bot.api.send_message(chat_id: message.from.id, text: "Bạn đã điểm danh, vui lòng điểm danh sau #{TIME_TO_CHECK} phút nữa.")
+      return location.to_a
+    end
 
     if distance <= threshold_distance
       begin
@@ -48,24 +49,24 @@ class LocationAttendance
           message.from.first_name,
           message.from.last_name,
           message.from.username,
-          TIME_STAMP,
+          time_now,
           true,
           message.from.id,
           location.to_a[0].to_f,
           location.to_a[1].to_f
         )
-        bot.api.send_message(chat_id: message.from.id, text: "Bạn đã điểm danh vào lúc #{TIME_STAMP}")
+        bot.api.send_message(chat_id: message.from.id, text: "Bạn đã điểm danh thành công vào lúc #{time_now}")
         puts 'You are checked => Add Student Successfully'
       rescue StandardError => e
         puts "Error: #{e}\nStack trace: #{e.backtrace.join("\n\t")}"
       end
     else
-      bot.api.send_message(chat_id: message.from.id, text: "Vị trí của bạn cách xa vị trí điểm danh khoảng #{formatted_distance} miles - #{TIME_STAMP} ")
+      bot.api.send_message(chat_id: message.from.id, text: "Vị trí của bạn cách xa vị trí điểm danh khoảng #{formatted_distance} miles - #{time_now} ")
       add_student(
         message.from.first_name,
         message.from.last_name,
         message.from.username,
-        TIME_STAMP,
+        time_now,
         false,
         message.from.id,
         location.to_a[0].to_f,
@@ -76,10 +77,11 @@ class LocationAttendance
   end
 
   def export_csv(bot, message)
+    time_now = Time.zone.now.strftime('%Y-%m-%d %H:%M:%S')
     conn = PG.connect(dbname: DB_NAME.to_s, user: DB_USER.to_s, password: DB_PASSWORD.to_s,
                       host: DB_HOST.to_s, port: DB_PORT.to_s)
-    start_time = (DateTime.parse(TIME_STAMP) - Rational(30, 24 * 60)).strftime('%Y-%m-%d %H:%M:%S')
-    end_time = (DateTime.parse(TIME_STAMP) + Rational(30, 24 * 60)).strftime('%Y-%m-%d %H:%M:%S')
+    start_time = (DateTime.parse(time_now) - Rational(30, 24 * 60)).strftime('%Y-%m-%d %H:%M:%S')
+    end_time = (DateTime.parse(time_now) + Rational(30, 24 * 60)).strftime('%Y-%m-%d %H:%M:%S')
     result = conn.exec_params('SELECT *, CASE WHEN attend THEN \'Yes\' ELSE \'No\' END AS attendance_status FROM students WHERE time BETWEEN $1::timestamp - interval \'15 minutes\' AND $2::timestamp + interval \'15 minutes\'', [start_time, end_time])
 
     unless File.exist?(CSV_FILE_PATH)
@@ -137,7 +139,7 @@ class LocationAttendance
       if result.ntuples > 0
         last_interaction_time = Time.parse(result[0]['time'])
         puts "time_to_check: #{ current_time - last_interaction_time }"
-        if (current_time - last_interaction_time) < 60 * 3
+        if (current_time - last_interaction_time) < 60 * TIME_TO_CHECK
           puts 'User attempt check in too fast'
           return true
         end
