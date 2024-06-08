@@ -20,7 +20,7 @@ module BotHelper
   def self.get_location_inline(coordinate, data, action = 'a')
     if %w[attend
           drop].include? data.query&.downcase
-      get_location(coordinate, data.query&.downcase&.include?('drop') ? 'd' : 'a')
+      get_location(coordinate, data, data.query&.downcase&.include?('drop') ? 'd' : 'a', action)
     end
   end
 

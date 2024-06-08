@@ -37,10 +37,11 @@ class LocationAttendance
     formatted_distance = format("%.2f", distance)
     threshold_distance = THRESHOLD_DISTANCE
     puts "Timestamp: #{time_now}"
-    # if handle_user_spam?(bot, message)
-    #   bot.api.send_message(chat_id: message.from.id, text: "Bạn đã điểm danh, vui lòng điểm danh sau #{TIME_TO_CHECK} phút nữa.")
-    #   return location.to_a
-    # end
+    if handle_user_spam?(bot, message)
+      puts 'User attempt check in too fast'
+      bot.api.send_message(chat_id: message.from.id, text: "Bạn đã điểm danh, vui lòng điểm danh sau #{TIME_TO_CHECK} phút nữa.")
+      return location.to_a
+    end
 
     if distance <= threshold_distance
       begin
@@ -130,14 +131,15 @@ class LocationAttendance
 
   def handle_user_spam?(bot, message)
     begin
-      Time.zone = 'Asia/Bangkok'
       time_now = Time.zone.now.strftime('%Y-%m-%d %H:%M:%S')
       conn = PG.connect(dbname: DB_NAME.to_s, user: DB_USER.to_s, password: DB_PASSWORD.to_s, host: DB_HOST.to_s, port: DB_PORT.to_s)
       result = conn.exec_params('SELECT * FROM students WHERE user_id = $1 ORDER BY time DESC LIMIT 1', [message.from.id])
-      current_time = time_now
-      puts "current_time: #{current_time} - result: #{result.ntuples}"
+      current_time = Time.parse(time_now)
+      puts "current_time: #{current_time} - result: #{result}"
       if result.ntuples > 0
-        last_interaction_time = Time.parse(result[0]['time'])
+        puts "You already checked in. #{current_time} - #{result[0]['time']}"
+        last_interaction_time = Time.zone.parse(result[0]['time'])
+        puts "last_interaction_time: #{last_interaction_time}"
         puts "time_to_check: #{ current_time - last_interaction_time }"
         if (current_time - last_interaction_time) < 60 * TIME_TO_CHECK
           puts 'User attempt check in too fast'
