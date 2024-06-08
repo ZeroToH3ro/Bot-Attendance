@@ -131,6 +131,7 @@ class LocationAttendance
 
   def handle_user_spam?(bot, message)
     begin
+      Time.zone = 'Asia/Bangkok'
       time_now = Time.zone.now.strftime('%Y-%m-%d %H:%M:%S')
       conn = PG.connect(dbname: DB_NAME.to_s, user: DB_USER.to_s, password: DB_PASSWORD.to_s, host: DB_HOST.to_s, port: DB_PORT.to_s)
       result = conn.exec_params('SELECT * FROM students WHERE user_id = $1 ORDER BY time DESC LIMIT 1', [message.from.id])
