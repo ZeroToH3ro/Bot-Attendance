@@ -136,12 +136,11 @@ class LocationAttendance
       time_now = Time.zone.now
       conn = PG.connect(dbname: DB_NAME.to_s, user: DB_USER.to_s, password: DB_PASSWORD.to_s, host: DB_HOST.to_s, port: DB_PORT.to_s)
       result = conn.exec_params('SELECT * FROM students WHERE user_id = $1 ORDER BY time DESC LIMIT 1', [message.from.id])
-      current_time = Time.parse(time_now)
       puts "current_time: #{current_time} - result: #{result}"
       if result.ntuples > 0
         puts "You already checked in. #{current_time} - #{result[0]['time']}"
         last_interaction_time = Time.zone.parse(result[0]['time'])
-        time_to_check = (current_time - last_interaction_time).to_i
+        time_to_check = (time_now - last_interaction_time).to_i
         puts "last_interaction_time: #{last_interaction_time}"
         puts "time_to_check: #{ current_time - last_interaction_time }"
         if time_to_check < 60 * TIME_TO_CHECK
