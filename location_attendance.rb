@@ -37,9 +37,7 @@ class LocationAttendance
     distance = Geocoder::Calculations.distance_between(school_coordinates, location.to_a)
     formatted_distance = format("%.2f", distance)
     threshold_distance = THRESHOLD_DISTANCE
-    puts "Timestamp: #{time_now}"
     if handle_user_spam?(bot, message)
-      puts 'User attempt check in too fast'
       bot.api.send_message(chat_id: message.from.id, text: "Bạn đã điểm danh, vui lòng điểm danh sau #{TIME_TO_CHECK} phút nữa.")
       return location.to_a
     end
@@ -134,20 +132,18 @@ class LocationAttendance
     begin
       Time.zone = 'Asia/Bangkok'
       time_now = Time.zone.now
+      puts "time_now: #{time_now}"
       conn = PG.connect(dbname: DB_NAME.to_s, user: DB_USER.to_s, password: DB_PASSWORD.to_s, host: DB_HOST.to_s, port: DB_PORT.to_s)
       result = conn.exec_params('SELECT * FROM students WHERE user_id = $1 ORDER BY time DESC LIMIT 1', [message.from.id])
-      puts "current_time: #{current_time} - result: #{result}"
       if result.ntuples > 0
         last_interaction_time = Time.zone.parse(result[0]['time'])
         time_to_check = (time_now - last_interaction_time).to_i
-        puts "last_interaction_time: #{last_interaction_time} time_to_check: #{time_to_check}"
-        puts "time_to_check: #{ time_now - last_interaction_time }"
+        puts "last_interaction_time: #{last_interaction_time} time_now: #{time_now} => time_to_check: #{time_to_check}"
         if time_to_check < 60 * TIME_TO_CHECK
           puts 'User attempt check in too fast'
           return true
         end
       end
-      puts "User is allowed to check in."
       return false
     rescue PG::Error => e
       puts "Error executing SQL query: #{e.message}"
