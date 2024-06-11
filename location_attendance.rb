@@ -83,13 +83,13 @@ class LocationAttendance
                       host: DB_HOST.to_s, port: DB_PORT.to_s)
     # Calculate the start and end time for the specific date
     # Using when I missed to export file csv at this time
-    specific_date = Date.parse('2024-05-29')
-    start_time = specific_date.to_time.strftime('%Y-%m-%d %H:%M:%S')
-    end_time = (specific_date.to_time + 24*60*60 - 1).strftime('%Y-%m-%d %H:%M:%S')
-    result = conn.exec_params('SELECT *, CASE WHEN attend THEN \'Yes\' ELSE \'No\' END AS attendance_status FROM students WHERE time BETWEEN $1 AND $2', [start_time, end_time])
-    # start_time = (DateTime.parse(time_now) - Rational(30, 24 * 60)).strftime('%Y-%m-%d %H:%M:%S')
-    # end_time = (DateTime.parse(time_now) + Rational(30, 24 * 60)).strftime('%Y-%m-%d %H:%M:%S')
-    # result = conn.exec_params('SELECT *, CASE WHEN attend THEN \'Yes\' ELSE \'No\' END AS attendance_status FROM students WHERE time BETWEEN $1::timestamp - interval \'15 minutes\' AND $2::timestamp + interval \'15 minutes\'', [start_time, end_time])
+    # specific_date = Date.parse('2024-05-29')
+    # start_time = specific_date.to_time.strftime('%Y-%m-%d %H:%M:%S')
+    # end_time = (specific_date.to_time + 24*60*60 - 1).strftime('%Y-%m-%d %H:%M:%S')
+    # result = conn.exec_params('SELECT *, CASE WHEN attend THEN \'Yes\' ELSE \'No\' END AS attendance_status FROM students WHERE time BETWEEN $1 AND $2', [start_time, end_time])
+    start_time = (DateTime.parse(time_now) - Rational(30, 24 * 60)).strftime('%Y-%m-%d %H:%M:%S')
+    end_time = (DateTime.parse(time_now) + Rational(30, 24 * 60)).strftime('%Y-%m-%d %H:%M:%S')
+    result = conn.exec_params('SELECT *, CASE WHEN attend THEN \'Yes\' ELSE \'No\' END AS attendance_status FROM students WHERE time BETWEEN $1::timestamp - interval \'55 minutes\' AND $2::timestamp + interval \'55 minutes\'', [start_time, end_time])
 
     unless File.exist?(CSV_FILE_PATH)
       CSV.open(CSV_FILE_PATH, 'wb', encoding: 'UTF-8') do |csv|
