@@ -31,7 +31,6 @@ class LocationAttendance
   def initialize; end
 
   def attend_location(bot, location, message)
-    # test github
     Time.zone = 'Asia/Bangkok'
     time_now = Time.zone.now.strftime('%Y-%m-%d %H:%M:%S')
     school_coordinates = [LATITUDE_SCHOOL, LONGITUDE_SCHOOL]
@@ -138,8 +137,6 @@ class LocationAttendance
 
   def handle_user_spam?(bot, message)
     # test github
-    # test rebase
-    # done
     begin
       Time.zone = 'Asia/Bangkok'
       time_now = Time.zone.now
