@@ -137,6 +137,9 @@ class LocationAttendance
   end
 
   def handle_user_spam?(bot, message)
+    # test github
+    # test rebase
+    # done
     begin
       Time.zone = 'Asia/Bangkok'
       time_now = Time.zone.now
