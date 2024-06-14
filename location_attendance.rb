@@ -35,6 +35,7 @@ class LocationAttendance
     # test github 2
     # test github 3
     # test github 4
+    # test github
     Time.zone = 'Asia/Bangkok'
     time_now = Time.zone.now.strftime('%Y-%m-%d %H:%M:%S')
     school_coordinates = [LATITUDE_SCHOOL, LONGITUDE_SCHOOL]
