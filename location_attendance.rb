@@ -88,9 +88,15 @@ class LocationAttendance
     # start_time = specific_date.to_time.strftime('%Y-%m-%d %H:%M:%S')
     # end_time = (specific_date.to_time + 24*60*60 - 1).strftime('%Y-%m-%d %H:%M:%S')
     # result = conn.exec_params('SELECT *, CASE WHEN attend THEN \'Yes\' ELSE \'No\' END AS attendance_status FROM students WHERE time BETWEEN $1 AND $2', [start_time, end_time])
-    start_time = (DateTime.parse(time_now) - Rational(30, 24 * 60)).strftime('%Y-%m-%d %H:%M:%S')
-    end_time = (DateTime.parse(time_now) + Rational(30, 24 * 60)).strftime('%Y-%m-%d %H:%M:%S')
-    result = conn.exec_params('SELECT *, CASE WHEN attend THEN \'Yes\' ELSE \'No\' END AS attendance_status FROM students WHERE time BETWEEN $1::timestamp - interval \'55 minutes\' AND $2::timestamp + interval \'55 minutes\'', [start_time, end_time])
+    time_now = DateTime.now.strftime('%Y-%m-%d %H:%M:%S') # Current time in the desired format
+    start_time = (DateTime.parse(time_now) - 1).strftime('%Y-%m-%d %H:%M:%S') # 24 hours ago
+    end_time = time_now
+    result = conn.exec_params(
+      'SELECT *, CASE WHEN attend THEN \'Yes\' ELSE \'No\' END AS attendance_status
+       FROM students
+       WHERE time BETWEEN $1::timestamp AND $2::timestamp',
+      [start_time, end_time]
+    )
 
     unless File.exist?(CSV_FILE_PATH)
       CSV.open(CSV_FILE_PATH, 'wb', encoding: 'UTF-8') do |csv|
