@@ -79,7 +79,6 @@ class LocationAttendance
   end
 
   def export_csv(bot, message)
-    time_now = Time.zone.now.strftime('%Y-%m-%d %H:%M:%S')
     conn = PG.connect(dbname: DB_NAME.to_s, user: DB_USER.to_s, password: DB_PASSWORD.to_s,
                       host: DB_HOST.to_s, port: DB_PORT.to_s)
     # Calculate the start and end time for the specific date
@@ -88,7 +87,7 @@ class LocationAttendance
     # start_time = specific_date.to_time.strftime('%Y-%m-%d %H:%M:%S')
     # end_time = (specific_date.to_time + 24*60*60 - 1).strftime('%Y-%m-%d %H:%M:%S')
     # result = conn.exec_params('SELECT *, CASE WHEN attend THEN \'Yes\' ELSE \'No\' END AS attendance_status FROM students WHERE time BETWEEN $1 AND $2', [start_time, end_time])
-    time_now = DateTime.now.strftime('%Y-%m-%d %H:%M:%S') # Current time in the desired format
+    time_now = Time.zone.now.strftime('%Y-%m-%d %H:%M:%S')
     start_time = (DateTime.parse(time_now) - 1).strftime('%Y-%m-%d %H:%M:%S') # 24 hours ago
     end_time = time_now
     result = conn.exec_params(
